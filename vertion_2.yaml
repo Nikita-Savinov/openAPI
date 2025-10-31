@@ -1,0 +1,256 @@
+openapi: 3.0.4
+info: 
+  title: "USOI API connection"
+  description: |-
+    Very useful material about API connection to USOI 
+    
+    **Landsapce:** [USOI lanspace](https://web-ois-gufam-dev.okd.asuproject.ru/)
+  contact:
+    name: to Admin
+    email: nssavinov@asuproject.ru
+  version: 1.0.0
+
+servers:
+  # Added by API Auto Mocking Plugin
+  - url: https://pg-ois-usoi-qas.okd.asuproject.ru/api
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/ois-a72/Test/1.0.0
+
+tags: 
+  - name: Production
+    description: Here is everything about prosuction data acquisition
+    externalDocs:
+      description: Find out more
+      url: https://help.asuproject.ru/dashboard.action
+
+paths: 
+  /function/usval:
+    get:
+      tags:
+      - Production
+      description: To extract production from the fields (One value)
+      parameters: 
+      - name: u
+        in: query
+        description: username for authorization
+        schema:
+          type: string
+          default: example_name
+      - name: p
+        in: query
+        description: user password
+        schema:
+          type: string
+          default: pass123
+      - name: c
+        description: database name 
+        in: query
+        schema:
+          type: string
+          default: postgrees1
+      - name: _m
+        description: abonent name 
+        in: query
+        schema:
+          type: string
+          default: 1.D.BPLAN.MINING_COM_GK.GK.TN
+      - name: _a
+        description: number, default = 1 
+        in: query
+        schema:
+          type: string
+          default: pl_0105001_002_001
+      - name: _d
+        description: date and time for our parameter
+        in: query 
+        schema:
+          type: string
+          default: 01.05.2025 
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                title: Sample
+                type: object
+                properties:
+                  value:
+                    type: number
+                    example: 1000
+                  type: 
+                    type: string
+                    example: FLOAT
+                  
+        404:
+          description: Not found response
+          content:
+            application/json:
+              schema:
+                title: Example
+                type: object
+                properties:
+                  error:
+                    type: integer
+                    example: 404
+                  message: 
+                    example: Error happened
+                    type: string
+  /data/eval:
+    post:
+      tags: 
+      - Production
+      description: Extract production from the field for the period
+      parameters: 
+      - name: u
+        description: username 
+        in: query
+        schema: 
+          default: username
+          type: string
+      - name: p
+        description: password 
+        in: query
+        schema: 
+          type: string
+          default: password123
+      - name: c
+        in: query
+        description: database server
+        schema:
+          type: string
+          default: example_pg
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                functions:
+                  type: array
+                  description: list of properties
+                  items:
+                    type: object 
+                    properties:
+                      function: 
+                        type: string 
+                        description: function name
+                        example: USVALS
+                      category: 
+                        type: integer 
+                        description: category name, default param = 1 
+                        example: 1 
+                      abonent: 
+                        type: string 
+                        description: abonent fullname, means the object name 
+                        example: t1:org_01:dzo_01_0105:lu_0105_001:ms_0105001_002:pl_0105001_002_001
+                      measure: 
+                        type: string
+                        description: param's name fron abonent, e.g. gas production
+                        example: D.BPLAN.MINING_COM_GK.GK.TN
+                      begin:
+                        type: string
+                        description: starting day for our period
+                        example: 01.05.2025 23:59:59
+                      end:
+                        type: string
+                        description: ending day for our period
+                        example: 31.05.2025 23:59:59
+            example: 
+              functions:
+                - function: USVALS,
+                  category: 1,
+                  abonent: t1:org_01:dzo_01_0105:lu_0105_001:ms_0105001_002:pl_0105001_002_001,
+                  measure: D.BPLAN.MINING_COM_GK.GK.TN,
+                  begin: 01.05.2025 23:59:59,
+                  end: 31.05.2025 23:59:59
+                - function: USVALS,
+                  category: 1,
+                  abonent: t1:org_01:dzo_01_0105:lu_0105_001:ms_0105001_002:pl_0105001_002_002,
+                  measure: D.BPLAN.MINING_COM_GK.GK.TN,
+                  begin: 01.05.2025 23:59:59,
+                  end: 31.05.2025 23:59:59
+      responses:
+        200:
+          description: Succesful response
+          content:
+            application/json:
+              schema:
+                title: Sample
+                type: object
+                properties:
+                  functions:
+                    type: array 
+                    items:
+                      type: object
+                      properties:
+                        category: 
+                          type: integer 
+                          description: category name, default param = 1 
+                          example: 1 
+                        measure: 
+                          type: string
+                          description: param's name fron abonent, e.g. gas production
+                          example: D.BPLAN.MINING_COM_GK.GK.TN
+                        abonent: 
+                          type: string 
+                          description: abonent fullname, means the object name 
+                          example: t1:org_01:dzo_01_0105:lu_0105_001:ms_0105001_002:pl_0105001_002_001
+                        abonentMask: 
+                          type: string 
+                          description: abonentMask 
+                          example: t1:org_01:dzo_01_0105:lu_0105_001:ms_0105001_002:pl_0105001_002_001
+                        begin:
+                          type: string
+                          description: starting day for our period
+                          example: 01.05.2025 23:59:59
+                        end:
+                          type: string
+                          description: ending day for our period
+                          example: 31.05.2025 23:59:59
+                        result:
+                          type: object
+                          description: results list
+                          properties: 
+                            list:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  date:
+                                    type: string
+                                    description: Param's date
+                                    example: 01.05.2025 23:59:59
+                                  abonent:
+                                    type: string
+                                    description: abonent name
+                                    example: t1:org_01:dzo_01_0105:lu_0105_001:ms_0105001_002:pl_0105001_002_001
+                                  value:
+                                    type: number
+                                    description: value number
+                                    example: 1000
+        404:
+          description: failure happend
+          content:
+            application/json:
+              schema:
+                title: Sample
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 404
+                  message:
+                    type: string
+                    example: Error happened
+        500:
+          description: Problems on the server 
+          content:
+            application/json:
+              schema:
+                type: object 
+                properties:
+                  error_number:
+                    type: string
+                    example: 500
